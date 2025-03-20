@@ -1,6 +1,6 @@
 "use client";
 import { getRecipesFromServer } from "@/app/components/api/getRecipesFromServer";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import RecipeListItem from "../RecipeListItem";
 
@@ -26,16 +26,20 @@ const ListRecipies = () => {
 	console.log(query, cuisine, maxReadyTime);
 	useEffect(() => {
 		const fetchRecipes = async () => {
-			if (query && cuisine && maxReadyTime) {
+
 				const params = { query, cuisine, maxReadyTime: Number(maxReadyTime) };
-				const data = await getRecipesFromServer(params);
-				console.log(data)
-				setRecipeList(data.results);
-			}
+				try {
+					const data = await getRecipesFromServer(params);
+					setRecipeList(data.results);
+				} catch (error) {
+					console.error("Error fetching recipes:", error);
+				}
+				console.log(params)
+			
 		};
 		fetchRecipes();
 		console.log(recipeList);
-		
+
 	}, [query, cuisine, maxReadyTime]);
 
 	return (
